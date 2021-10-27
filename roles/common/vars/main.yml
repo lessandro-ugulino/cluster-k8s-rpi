@@ -1,0 +1,16 @@
+packages:
+  - bash-completion
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - software-properties-common
+  - python3-pip
+  - virtualenv
+  - python3-setuptools
+  - elinks
+  - etcd-client
+
+K8s_packages:
+  - kubelet={{ K8s.version }}
+  - kubeadm={{ K8s.version }}
+  - kubectl={{ K8s.version }}

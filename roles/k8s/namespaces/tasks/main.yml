@@ -1,0 +1,12 @@
+- name: Convert Yaml template
+  become: false
+  template:
+    src: namespace.yml.j2
+    dest: /tmp/namespace.yml
+    mode: 0777
+
+- name: apply Yaml template
+  shell: kubectl apply -f /tmp/namespace.yml >> namespace.log
+  args:
+    chdir: $HOME
+    creates: namespace.log

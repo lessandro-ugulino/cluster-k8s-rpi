@@ -1,0 +1,144 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: wireguard-pv
+  namespace: devops-tools
+  labels:
+    type: local
+spec:
+  claimRef:
+    name: wireguard-pvc
+    namespace: devops-tools
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/volume/devops/wireguard"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - 'rpi-k8s-node-1' #The node to store the volume content
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: wireguard-pvc
+  namespace: devops-tools
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wireguard-configmap
+  namespace: devops-tools
+data:
+  PUID: "1000"
+  PGID: "1000"
+  TZ: "Australia/Sydney"
+  SERVERPORT: "31820"
+  SERVERURL: "{{ AWS.VPN_NAME }}" # your dns name
+  PEERS: "5" #How many client will be able to connect.
+  PEERDNS: auto
+  ALLOWEDIPS: "0.0.0.0/0, ::/0"
+  INTERNAL_SUBNET: "10.13.13.0"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wireguard
+  namespace: devops-tools
+  labels:
+    app: wireguard-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wireguard-server
+  template:
+    metadata:
+      labels:
+        app: wireguard-server
+    spec:
+      securityContext:
+            fsGroup: 1000
+            runAsUser: 0
+      containers:
+        - name: wireguard
+          image: lscr.io/linuxserver/wireguard
+          envFrom:
+          - configMapRef:
+              name: wireguard-configmap
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+                - SYS_MODULE
+            privileged: true
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "10m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          ports:
+            - containerPort: 51820
+              protocol: UDP
+          volumeMounts:
+            - name: wireguard-config
+              mountPath: /config
+            - name: host-volumes
+              mountPath: /lib/modules
+      volumes:
+        - name: wireguard-config
+          persistentVolumeClaim:
+              claimName: wireguard-pvc
+        - name: host-volumes
+          hostPath:
+            path: /lib/modules
+            type: Directory
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: wireguard-hpa
+  namespace: devops-tools
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: wireguard
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: wireguard-svc
+  namespace: devops-tools
+spec:
+  type: NodePort
+  ports:
+  - port: 51820
+    nodePort: 31820
+    protocol: UDP
+    targetPort: 51820
+  selector:
+    app: wireguard-server

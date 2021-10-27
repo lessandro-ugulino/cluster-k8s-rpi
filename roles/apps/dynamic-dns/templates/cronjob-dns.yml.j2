@@ -1,0 +1,43 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  namespace: devops-tools
+  name: run-check-pub-ip
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 0
+  jobTemplate:
+    spec:
+      completions: 1
+      template:
+        spec:
+          containers:
+          - name: container-update-route53
+            image: amazon/aws-cli
+            command: ["/scripts/runtimeConfig.sh"]
+            env:
+              - name: AWS_ACCESS_KEY_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: aws-credentials
+                    key: id
+              - name: AWS_SECRET_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: aws-credentials
+                    key: key
+              - name: AWS_DEFAULT_REGION
+                value: "{{ AWS.default_region }}"
+            volumeMounts:
+              - name: check-ip-config
+                mountPath: /scripts
+          restartPolicy: OnFailure
+          volumes:
+          - name: check-ip-config
+            configMap:
+              name: check-ip-config
+              defaultMode: 0744
+      backoffLimit: 0

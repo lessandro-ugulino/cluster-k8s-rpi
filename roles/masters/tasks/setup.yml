@@ -1,0 +1,126 @@
+---
+# - name: Add autocompeltion source
+#   shell: echo 'source /usr/share/bash-completion/bash_completion' >>~/.bashrc
+# - name: Kubectl autocompletion
+#   shell: echo 'source <(kubectl completion bash)' >>~/.bashrc && echo 'alias k=kubectl' >>~/.bashrc
+
+- name: Check if Kubernetes has already been initialized
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: kubernetes_init_stat
+
+- name: Restart service docker, in all cases, also issue daemon-reload to pick up config changes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker
+
+- name: Restart service kubelet, in all cases, also issue daemon-reload to pick up config changes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: kubelet
+
+- name: Initialize Kubernetes master
+  command: >
+    kubeadm init --apiserver-advertise-address="{{ IpAddress.k8s_master }}" --pod-network-cidr={{ K8s.podSubnet }}
+  register: kubeadmin_init
+  when: not kubernetes_init_stat.stat.exists
+
+- name: Create .kube directory
+  file:
+    path: $HOME/.kube
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+
+- name: copy default cluster configuration
+  shell: cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  args:
+    chdir: $HOME
+    creates: $HOME/.kube/config
+
+- name: change config mode
+  file:
+    path: $HOME/.kube/config
+    state: file
+    owner: root
+    group: root
+    mode: 0660
+
+- name: update kernel settings [bridge-nf-call-ip6tables]
+  become: yes
+  sysctl:
+    name: net/bridge/bridge-nf-call-ip6tables
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: update kernel settings [net/bridge/bridge-nf-call-iptables]
+  become: yes
+  sysctl:
+    name: net/bridge/bridge-nf-call-iptables
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: update kernel settings [net/bridge/bridge-nf-call-arptables]
+  become: yes
+  sysctl:
+    name: net/bridge/bridge-nf-call-arptables
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Convert Controller Manager Yaml template
+  template:
+    src: kube-controller-manager.yml.j2
+    dest: /etc/kubernetes/manifests/kube-controller-manager.yml
+    owner: root
+    group: root
+    mode: 0777
+
+- name: Convert Scheduler Yaml template
+  template:
+    src: kube-scheduler.yaml.j2
+    dest: /etc/kubernetes/manifests/kube-scheduler.yaml
+    owner: root
+    group: root
+    mode: 0777
+
+- name: restart kubectl
+  shell: "systemctl restart kubelet"
+
+- name: Pause for 30 seconds to nodes be ready
+  pause:
+    seconds: 30
+
+- name: Convert flannel Yaml template
+  become: false
+  template:
+    src: kube-flannel.yml.j2
+    dest: /tmp/kube-flannel.yml
+    mode: 0777
+
+- name: Apply flannel
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> flannel-apply.log
+  args:
+    chdir: $HOME
+    creates: flannel-apply.log
+
+- name: Convert Metric Yaml template
+  become: false
+  template:
+    src: metric-components.yaml.j2
+    dest: /tmp/metric-components.yaml
+    mode: 0777
+
+- name: apply Metric Yaml template
+  shell: kubectl apply -f /tmp/metric-components.yaml >> metric-components.log
+  args:
+    chdir: $HOME
+    creates: metric-components.log

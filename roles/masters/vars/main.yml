@@ -1,0 +1,3 @@
+kubernetes:
+  cidr: 10.244.0.0/16
+  cluster_name: cluster-lessandro

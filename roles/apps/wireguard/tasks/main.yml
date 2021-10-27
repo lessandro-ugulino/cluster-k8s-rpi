@@ -1,0 +1,12 @@
+- name: Convert Wireguard Deployment
+  become: false
+  template:
+    src: deploy-wireguard.yml.j2
+    dest: /tmp/deploy-wireguard.yml
+    mode: 0777
+
+- name: apply Wireguard Deployment
+  shell: kubectl apply -f /tmp/deploy-wireguard.yml >> deploy-wireguard.log
+  args:
+    chdir: $HOME
+    creates: deploy-wireguard.log

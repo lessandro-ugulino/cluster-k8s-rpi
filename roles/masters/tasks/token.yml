@@ -1,0 +1,8 @@
+- name: create kubernetes join token
+  shell: kubeadm token create --print-join-command
+  register: join_command_raw
+
+# - debug: msg="join command is {{ join_command_raw.stdout }}"
+
+- name: Set join command as gather_facts
+  set_fact: join_command="{{ join_command_raw.stdout }}"

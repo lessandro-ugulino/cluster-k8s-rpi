@@ -1,0 +1,14 @@
+IpAddress:
+  k8s_master: 192.168.1.123
+  k8s_node_1: 192.168.1.111
+  k8s_node_2: 192.168.1.175
+
+K8s:
+  cluster_name: cluster-rpi-lessandro
+  podSubnet: "10.244.0.0/16"
+  version: 1.22.0-00
+
+AWS:
+  HOSTED_ZONE_ID: ABCDE #Your Route53 Zone Id
+  VPN_NAME: example.com #Your public record
+  default_region: ap-southeast-2 #Your default AWS Region

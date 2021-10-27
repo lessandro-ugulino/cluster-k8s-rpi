@@ -1,0 +1,26 @@
+---
+# This part will deploy and setup Kubernetes on all devices.
+- hosts: all
+  become: true
+  roles:
+    - common
+
+# This part will initiate Kubernetes on the master node.
+- hosts: master
+  become: true
+  roles:
+    - masters
+
+# This part will join the nodes in the cluster.
+- hosts: nodes
+  become: true
+  roles:
+    - nodes
+
+# This part will install and set up the applications/services.
+- hosts: master
+  become: true
+  roles:
+    - k8s/namespaces
+    - apps/dynamic-dns
+    - apps/wireguard

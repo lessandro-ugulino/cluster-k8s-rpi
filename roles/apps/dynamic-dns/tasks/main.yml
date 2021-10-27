@@ -1,0 +1,38 @@
+- name: Convert ConfigMap script DNS
+  become: false
+  template:
+    src: configmap-script-dns.yml.j2
+    dest: /tmp/configmap-script-dns.yml
+    mode: 0777
+
+- name: apply ConfigMap script DNS
+  shell: kubectl apply -f /tmp/configmap-script-dns.yml >> configmap-script-dns.log
+  args:
+    chdir: $HOME
+    creates: configmap-script-dns.log
+
+- name: Convert Secret (k8s IAM)
+  become: false
+  template:
+    src: secret-k8s-iam.yml.j2
+    dest: /tmp/secret-k8s-iam.yml
+    mode: 0777
+
+- name: apply Secret (k8s IAM)
+  shell: kubectl apply -f /tmp/secret-k8s-iam.yml >> secret-k8s-iam.log
+  args:
+    chdir: $HOME
+    creates: secret-k8s-iam.log
+
+- name: Convert Cronjob - update Dns record
+  become: false
+  template:
+    src: cronjob-dns.yml.j2
+    dest: /tmp/cronjob-dns.yml
+    mode: 0777
+
+- name: apply Cronjob - update Dns record
+  shell: kubectl apply -f /tmp/cronjob-dns.yml >> cronjob-dns.log
+  args:
+    chdir: $HOME
+    creates: cronjob-dns.log
