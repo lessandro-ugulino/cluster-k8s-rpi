@@ -20,6 +20,8 @@ _WireGuard is a communication protocol and free and open-source software that im
 
 2. This deployment depends on [dynamic-dns](../dynamic-dns/README.md) deployment, because the **Wireguard** will use the domain name.
 
+3. This deployment depends on [nfs-server](../nfs-server/README.md) deployment.
+
 Update the file `deploy-wireguard.yml.j2` with your domain name.
 
 ```yaml
