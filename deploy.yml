@@ -17,6 +17,13 @@
   roles:
     - nodes
 
+#Install the shared storage on rpi-k8s-node-2
+- hosts:
+    - rpi-k8s-node-2
+  become: true
+  roles:
+    - apps/nfs-server
+
 # This part will install and set up the applications/services.
 - hosts: master
   become: true

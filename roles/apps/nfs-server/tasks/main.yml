@@ -1,0 +1,28 @@
+- name: Install NFS Server application
+  apt:
+    name: nfs-kernel-server
+    state: latest
+    update_cache: yes
+    force_apt_get: yes
+
+- name: Create directory for storage for wireguard
+  file:
+    path: /mnt/nfsshare/wireguard
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+
+- name: Create directory for storage for jenkins
+  file:
+    path: /mnt/nfsshare/jenkins
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+
+- name: Setup permission to root account
+  shell: echo "/mnt/nfsshare *(rw,all_squash,insecure,async,no_subtree_check,anonuid=0,anongid=0)" >> /etc/exports
+
+- name: Update the current table of exports available to the NFS server.
+  shell: exportfs -ra

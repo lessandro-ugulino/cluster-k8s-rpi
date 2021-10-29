@@ -10,22 +10,16 @@ spec:
   claimRef:
     name: wireguard-pvc
     namespace: devops-tools
-  storageClassName: manual
+  storageClassName: ""
+  nfs:
+    path: "/mnt/nfsshare/wireguard"
+    server: "{{ IpAddress.k8s_node_2 }}"
+    readOnly: false
   persistentVolumeReclaimPolicy: Retain
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteMany
-  hostPath:
-    path: "/volume/devops/wireguard"
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - 'rpi-k8s-node-1' #The node to store the volume content
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1

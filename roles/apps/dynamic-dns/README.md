@@ -8,7 +8,7 @@
 
 ## Summary
 
-This will deploy a dynamic service. A K8s cronjob will run every **5 min** to check your Public Ip address and then update your public record if there any update.
+This will deploy a dynamic service. A K8s cronjob will run every **5 min** to check your Public Ip address and then update your public record if there is any update.
 
 ## Requirements
 

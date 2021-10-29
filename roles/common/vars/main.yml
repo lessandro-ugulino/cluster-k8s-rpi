@@ -9,6 +9,7 @@ packages:
   - python3-setuptools
   - elinks
   - etcd-client
+  - nfs-common
 
 K8s_packages:
   - kubelet={{ K8s.version }}
