@@ -13,7 +13,7 @@ spec:
   storageClassName: ""
   nfs:
     path: "/mnt/nfsshare/wireguard"
-    server: "{{ IpAddress.k8s_node_2 }}"
+    server: "{{ IpAddress.k8s_storage }}"
     readOnly: false
   persistentVolumeReclaimPolicy: Retain
   capacity:

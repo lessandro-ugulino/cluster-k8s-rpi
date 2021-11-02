@@ -1,7 +1,10 @@
+TimeZone: Australia/Sydney
+
 IpAddress:
   k8s_master: 192.168.1.123
   k8s_node_1: 192.168.1.111
-  k8s_node_2: 192.168.1.175
+  k8s_node_2: 192.168.1
+  k8s_storage: 192.168.1.175
 
 K8s:
   cluster_name: cluster-rpi-lessandro

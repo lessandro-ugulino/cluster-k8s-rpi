@@ -1,0 +1,35 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: jenkins-pv
+  namespace: devops-tools
+  labels:
+    type: local
+spec:
+  claimRef:
+    name: jenkins-pvc
+    namespace: devops-tools
+  storageClassName: ""
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    path: "/mnt/nfsshare/jenkins"
+    server: "{{ IpAddress.k8s_storage }}"
+    readOnly: false
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: jenkins-pvc
+  namespace: devops-tools
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+

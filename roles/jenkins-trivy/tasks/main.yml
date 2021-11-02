@@ -1,0 +1,38 @@
+- name: Convert Volume Jenkins Yaml template
+  become: false
+  template:
+    src: volume.yml.j2
+    dest: /tmp/volume-jenkins.yml
+    mode: 0777
+
+- name: apply Volume Jenkins Yaml template
+  shell: kubectl apply -f /tmp/volume-jenkins.yml >> volume-jenkins.log
+  args:
+    chdir: $HOME
+    creates: volume-jenkins.log
+
+- name: Convert Deploy Jenkins Yaml template
+  become: false
+  template:
+    src: deploy.yml.j2
+    dest: /tmp/deploy-jenkins.yml
+    mode: 0777
+
+- name: apply Deploy Jenkins Yaml template
+  shell: kubectl apply -f /tmp/deploy-jenkins.yml >> deploy-jenkins.log
+  args:
+    chdir: $HOME
+    creates: deploy-jenkins.log
+
+- name: Convert Service Jenkins Yaml template
+  become: false
+  template:
+    src: service.yml.j2
+    dest: /tmp/service-jenkins.yml
+    mode: 0777
+
+- name: apply Deploy Service Yaml template
+  shell: kubectl apply -f /tmp/service-jenkins.yml >> service-jenkins.log
+  args:
+    chdir: $HOME
+    creates: service-jenkins.log

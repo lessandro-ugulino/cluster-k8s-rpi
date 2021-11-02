@@ -1,6 +1,8 @@
 ---
 # This part will deploy and setup Kubernetes on all devices.
-- hosts: all
+- hosts:
+    - nodes
+    - master
   become: true
   roles:
     - common
@@ -17,9 +19,8 @@
   roles:
     - nodes
 
-#Install the shared storage on rpi-k8s-node-2
-- hosts:
-    - rpi-k8s-node-2
+#Install the shared storage on rpi-k8s-storage
+- hosts: storage
   become: true
   roles:
     - apps/nfs-server
@@ -31,3 +32,5 @@
     - k8s/namespaces
     - apps/dynamic-dns
     - apps/wireguard
+    - k8s/service-acc
+    - apps/jenkins-trivy

@@ -1,0 +1,12 @@
+- name: Convert ServiceAccount Yaml template
+  become: false
+  template:
+    src: service-account.yml.j2
+    dest: /tmp/service-account.yml
+    mode: 0777
+
+- name: apply ServiceAccount Yaml template
+  shell: kubectl apply -f /tmp/service-account.yml >> service-account.log
+  args:
+    chdir: $HOME
+    creates: service-account.log

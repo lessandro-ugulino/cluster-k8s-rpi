@@ -30,7 +30,7 @@
 
 ## Requirements
 
-1. The first step is to install the OS, for this project I'd choose **Ubuntu Server 20.04.3 LTS**. The step by step is <a href=https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview> here</a>.
+1. The first step is to install the OS, for this project I'd choose **Ubuntu Server 20.04.3 LTS**. Step by step is <a href=https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview> here</a>.
 
 2. Install <a href="https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-macos">Ansible</a> on your local computer.
 
@@ -48,11 +48,12 @@ As specified on the <a href=https://ubuntu.com/tutorials/how-to-install-ubuntu-o
 
 My cluster IP address.
 
-| Hostname       | IP Address      |
-| -------------- | --------------- |
-| rpi-k8s-master | `192.168.1.123` |
-| rpi-k8s-node-1 | `192.168.1.111` |
-| rpi-k8s-node-2 | `192.168.1.175` |
+| Hostname        | IP Address      |
+| --------------- | --------------- |
+| rpi-k8s-master  | `192.168.1.123` |
+| rpi-k8s-node-1  | `192.168.1.111` |
+| rpi-k8s-node-2  | `192.168.1.`    |
+| rpi-k8s-storage | `192.168.1.175` |
 
 Also, as I set up the Rpi to not use a static IP address, once the devices got the respective IPs, I bound this to each respective MAC Address on my router.
 
@@ -68,14 +69,16 @@ The file is located at `/inventory/hosts`
 [all:vars]
 ansible_connection=ssh
 ansible_user=ubuntu
-ansible_ssh_pass=Y8W123 #your ubuntu password
+ansible_ssh_pass=Y8WJq84Y #your ubuntu password
 
 [master]
 rpi-k8s-master  ansible_host=192.168.1.123
 
 [nodes]
 rpi-k8s-node-1  ansible_host=192.168.1.111
-rpi-k8s-node-2  ansible_host=192.168.1.175
+
+[storage]
+rpi-k8s-storage  ansible_host=192.168.1.175
 ```
 
 ### Group Vars
@@ -86,7 +89,8 @@ This file contains information to be used on K8s services. Update it accordingly
 IpAddress:
   k8s_master: 192.168.1.123
   k8s_node_1: 192.168.1.111
-  k8s_node_2: 192.168.1.175
+  k8s_node_2: 192.168.1
+  k8s_storage: 192.168.1.175
 
 K8s:
   cluster_name: cluster-rpi-lessandro
@@ -103,11 +107,12 @@ AWS:
 
 > :warning: Make sure you read the documentation before deploying the services.
 
-| Name        | URL | Username | Password | Documentation                            |
-| ----------- | --- | -------- | -------- | ---------------------------------------- |
-| Dynamic DNS | N/A | N/A      | N/A      | [link](roles/apps/dynamic-dns/README.md) |
-| Wireguard   | N/A | N/A      | N/A      | [link](roles/apps/wireguard/README.md)   |
-| NFS Server  | N/A | N/A      | N/A      | [link](roles/apps/nfs-server/README.md)  |
+| Name            | URL                        | Username | Password | Documentation                              |
+| --------------- | -------------------------- | -------- | -------- | ------------------------------------------ |
+| Dynamic DNS     | N/A                        | N/A      | N/A      | [link](roles/apps/dynamic-dns/README.md)   |
+| Wireguard       | N/A                        | N/A      | N/A      | [link](roles/apps/wireguard/README.md)     |
+| NFS Server      | N/A                        | N/A      | N/A      | [link](roles/apps/nfs-server/README.md)    |
+| Jenkins & Trivy | http://192.168.1.111:32000 | admin    | P@ssw0rd | [link](roles/apps/jenkins-trivy/README.md) |
 
 ### Deploy
 
