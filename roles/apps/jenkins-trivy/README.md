@@ -4,11 +4,11 @@
 
 - [Summary](#summary)
 - [Requirements](#requirements)
+- [Diagram](#diagram)
 - [Setup](#how-to-use)
   - [Jenkins](#jenkins)
   - [Trivy](#trivy)
     - [Build an image and scan it using trivy](#build-an-image-and-scan-it-using-trivy)
-- [Diagram](#diagram)
 
 ## Summary
 
@@ -23,6 +23,10 @@ _Trivy is a comprehensive and easy-to-use open source vulnerability scanner for 
 ## Requirements
 
 1. Before deploy this application, make sure you've deployed the **role/k8s/service-acc**, `jenkins-admin`.
+
+## Diagram
+
+![jenkins-diagram](../../../img/jenkins-diagram.png)
 
 ## Setup
 
@@ -62,9 +66,13 @@ Basically, the Jenkins pipeline will install trivy on the Jenkins container if i
 
 2. <a href=https://plugins.jenkins.io/aws-java-sdk-ecr> AWS ECR</a>
 
+**CI/CD Pipeline**
+
+![jenkins-cicd](../../../img/jenkins-cicd.png)
+
 **Jenkinsfile and Dockerfile**
 
-Create a _Jenkinsfile_ and a _Dockerfile_ similar on this repo.
+Create a _Jenkinsfile_ and a _Dockerfile_ similar to this repo.
 
 Basically, this Jenkins pipeline will build an image using the _Dockerfile_, install **trivy** on Jenkins container if it's not already installed, scan it via **trivy** to find any vulnerability and upload it to ECR Repo if no vulnerability was found.
 
@@ -187,7 +195,3 @@ Otherwise, it'll upload the image created from Dockerfile.
 ![jenkins-trivy](../../../img/jenkins-trivy.png)
 
 ![jenkins-done](../../../img/jenkins-done.png)
-
-## Diagram
-
-![jenkins-diagram](../../../img/jenkins-diagram.png)
