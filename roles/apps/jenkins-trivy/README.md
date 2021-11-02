@@ -34,19 +34,19 @@ Access http://192.168.1.111:32000, and grep the password requested to unlock Jen
 kubectl exec -ti jenkins-7d64cb8665-2mj2g -n devops-tools -- cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
-![jenkins-unlock](../../img/jenkins-unlock.png)
+![jenkins-unlock](../../../img/jenkins-unlock.png)
 
 Click **Install suggested plugins**
 
-![jenkins-customize](../../img/jenkins-customize.png)
+![jenkins-customize](../../../img/jenkins-customize.png)
 
 Wait for the installation to complete.
 
-![jenkins-plugin](../../img/jenkins-plugin.png)
+![jenkins-plugin](../../../img/jenkins-plugin.png)
 
 Setup the admin user and password.
 
-![jenkins-setup](../../img/jenkins-setup.png)
+![jenkins-setup](../../../img/jenkins-setup.png)
 
 ### Trivy
 
@@ -160,34 +160,34 @@ pipeline {
 
 On Jenkins console create a _Multibranch Pipeline_
 
-![jenkins-project](../../img/jenkins-project.png)
+![jenkins-project](../../../img/jenkins-project.png)
 
 Make sure you added the Repo URL address.
 
-![jenkins-github](../../img/jenkins-github.png)
+![jenkins-github](../../../img/jenkins-github.png)
 
 Click on **Build with Parameters**
 
-![jenkins-build](../../img/jenkins-build.png)
+![jenkins-build](../../../img/jenkins-build.png)
 
 Select the ECR repo to upload the image and click **Build**
 
-![jenkins-repo](../../img/jenkins-repo.png)
+![jenkins-repo](../../../img/jenkins-repo.png)
 
 You can check the output log by clicking on **Console Output**
 
-![jenkins-logs](../../img/jenkins-logs.png)
+![jenkins-logs](../../../img/jenkins-logs.png)
 
 If trivy scan finds any **HIGH** vulnerability, it'll stop the pipeline as shown below.
 
-![jenkins-trivy-error](../../img/jenkins-trivy-error.png)
+![jenkins-trivy-error](../../../img/jenkins-trivy-error.png)
 
 Otherwise, it'll upload the image created from Dockerfile.
 
-![jenkins-trivy](../../img/jenkins-trivy.png)
+![jenkins-trivy](../../../img/jenkins-trivy.png)
 
-![jenkins-done](../../img/jenkins-done.png)
+![jenkins-done](../../../img/jenkins-done.png)
 
 ## Diagram
 
-![jenkins-diagram](../../img/jenkins-diagram.png)
+![jenkins-diagram](../../../img/jenkins-diagram.png)
