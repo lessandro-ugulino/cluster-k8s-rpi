@@ -14,10 +14,12 @@
 
 This pipeline will deploy Jenkins and Trivy.
 
-**Jenkins**
+**Jenkins:**
+
 _Jenkins is an open source automation server. It helps automate the parts of software development related to building, testing, and deploying, facilitating continuous integration and continuous delivery._
 
-**Trivy**
+**Trivy:**
+
 _Trivy is a comprehensive and easy-to-use open source vulnerability scanner for container images_
 
 ## Requirements
@@ -74,16 +76,16 @@ Basically, the Jenkins pipeline will install trivy on the Jenkins container if i
 
 Create a _Jenkinsfile_ and a _Dockerfile_ similar to this repo.
 
-Basically, this Jenkins pipeline will build an image using the _Dockerfile_, install **trivy** on Jenkins container if it's not already installed, scan it via **trivy** to find any vulnerability and upload it to ECR Repo if no vulnerability was found.
+This Jenkins CI/CD pipeline will build an image using the _Dockerfile_, install **trivy** on Jenkins container if it's not already installed, scan the image created using the Dockerfile via **trivy** to find any vulnerability and upload it to ECR Repo if no vulnerability was found.
 
-Dockerfile
+**Dockerfile**
 
 ```
 FROM alpine:latest
 LABEL maintainer="lezampieri@hotmail.com"
 ```
 
-Jenkinsfile
+**Jenkinsfile**
 
 ```
 pipeline {
@@ -150,7 +152,7 @@ pipeline {
     stage('Docker push') {
         steps {
             script {
-                docker.withRegistry(ECR, 'ecr:ap-southeast-2:aws_credentials') {
+                docker.withRegistry(ECR/ECR_REPO, 'ecr:ap-southeast-2:aws_credentials') {
                 dockerImage.push()
                 dockerImage.push 'latest'
                 }
