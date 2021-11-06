@@ -17,9 +17,9 @@
 
 ## Hardware
 
-- 3 Raspberry Pi 4, 4Gb each
-- 3 Micro SDXC SanDisk 128Gb each (_I could use a smaller one, but this size was the same price as 64Gb_)
-- 3 Cables Ugreen USB C to USB A
+- 4 Raspberry Pi 4, 4Gb each
+- 4 Micro SDXC SanDisk 128Gb each (_I could use a smaller one, but this size was the same price as 64Gb_)
+- 4 Cables Ugreen USB C to USB A
 - 1 Micro-HDMI to standard HDMI
 - 1 GeeekPi Rack Tower 4 Layer Acrylic Cluster Case Large Cooling Fan LED RGB Light.
 - 1 Quick Charger 3.0, USB Plug Chargers, 33W Abetcabe 4 Ports USB
