@@ -107,12 +107,14 @@ AWS:
 
 > :warning: Make sure you read the documentation before deploying the services.
 
-| Name            | URL                        | Username | Password | Documentation                              |
-| --------------- | -------------------------- | -------- | -------- | ------------------------------------------ |
-| Dynamic DNS     | N/A                        | N/A      | N/A      | [link](roles/apps/dynamic-dns/README.md)   |
-| Wireguard       | N/A                        | N/A      | N/A      | [link](roles/apps/wireguard/README.md)     |
-| NFS Server      | N/A                        | N/A      | N/A      | [link](roles/apps/nfs-server/README.md)    |
-| Jenkins & Trivy | http://192.168.1.111:32000 | admin    | P@ssw0rd | [link](roles/apps/jenkins-trivy/README.md) |
+| Name                 | URL                        | Username | Password | Documentation                              |
+| -------------------- | -------------------------- | -------- | -------- | ------------------------------------------ |
+| Linkerd              | http://192.168.1.111:32100 | N/A      | N/A      | [link](roles/k8s/linkerd/README.md)        |
+| Kubernetes Dashboard | http://192.168.1.111:32200 | N/A      | N/A      | [link](roles/k8s/dashboard/README.md)      |
+| Dynamic DNS          | N/A                        | N/A      | N/A      | [link](roles/apps/dynamic-dns/README.md)   |
+| Wireguard            | N/A                        | N/A      | N/A      | [link](roles/apps/wireguard/README.md)     |
+| NFS Server           | N/A                        | N/A      | N/A      | [link](roles/apps/nfs-server/README.md)    |
+| Jenkins & Trivy      | http://192.168.1.111:32000 | admin    | P@ssw0rd | [link](roles/apps/jenkins-trivy/README.md) |
 
 ### Deploy
 

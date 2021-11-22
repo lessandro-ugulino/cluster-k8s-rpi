@@ -1,0 +1,29 @@
+- name: Put K8s dashboard template
+  template:
+    src: dashboard.yml.j2
+    dest: /tmp/k8s-dashboard.yml
+    mode: 0777
+
+- name: Deploy K8s dashboard
+  shell: "kubectl apply -f /tmp/k8s-dashboard.yml"
+
+- name: Get admin-user secret name
+  shell: kubectl get sa/admin-user -n kubernetes-dashboard -o jsonpath="{.secrets[0].name}"
+  register: admin_user
+
+- name: Get secret name
+  shell: "kubectl get secret -n kubernetes-dashboard -o=name | grep {{ admin_user.stdout }}"
+  register: secret
+
+- name: Generate K8s dashboard token
+  shell: "kubectl get {{ secret.stdout }} -n kubernetes-dashboard -o=jsonpath='{..token}'"
+  register: k8s_dashboard_token
+
+- name: show dashboard instructions
+  debug:
+    msg: "Dashboard is available at https://{{ IpAddress.k8s_node_1 }}:32200"
+    #Chrome error - type 'thisisunsafe'
+
+- name: Output k8s dashboard token
+  debug:
+    msg: "The dasboard login token is: {{ k8s_dashboard_token.stdout  | b64decode }}"

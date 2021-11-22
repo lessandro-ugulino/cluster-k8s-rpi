@@ -30,6 +30,8 @@
   become: true
   roles:
     - k8s/namespaces
+    - k8s/linkerd
+    - k8s/dashboard
     - apps/dynamic-dns
     - apps/wireguard
     - k8s/service-acc

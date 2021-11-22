@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app: jenkins-server
+      annotations:
+        linkerd.io/inject: enabled
     spec:
       securityContext:
           fsGroup: 1000
