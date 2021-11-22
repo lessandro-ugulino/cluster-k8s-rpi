@@ -61,6 +61,6 @@ Once the Ansible role `roles/k8s/linkerd` is deployed, we can access the Linkerd
 
 ### Buoyant
 
-For the Buoyant dashboard I'd recommend you to install it manually as you need to set up an account based on the installation instructions, <a herf=https://linkerd.io/2.11/getting-started/#step-5-explore-linkerd>link</a>.
+For the Buoyant dashboard I'd recommend you to install it manually as you need to set up an account based on the installation instructions, <a href=https://linkerd.io/2.11/getting-started/#step-5-explore-linkerd>link</a>.
 
 ![buoyant-dashboard](../../../img/buoyant-dashboard.png)
