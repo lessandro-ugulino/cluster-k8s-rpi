@@ -19,6 +19,13 @@
   shell: "kubectl get {{ secret.stdout }} -n kubernetes-dashboard -o=jsonpath='{..token}'"
   register: k8s_dashboard_token
 
+- name: save token to host
+  become: false
+  local_action:
+    module: copy
+    content: "{{ k8s_dashboard_token.stdout | b64decode }}"
+    dest: roles/k8s/dashboard/dashboard_token.txt
+
 - name: show dashboard instructions
   debug:
     msg: "Dashboard is available at https://{{ IpAddress.k8s_node_1 }}:32200"
