@@ -67,13 +67,15 @@
   pip:
     name: docker
 
-- name: Prevent updating kubeadm, kubelet and kubectl
-  dpkg_selections:
-    name:
-      - kubeadm
-      - kubelet
-      - kubectl
-    selection: hold
+- name: Prevent packages from being upgraded
+  shell:
+    cmd: |
+      dpkg --set-selections << EOF
+      kubeadm hold
+      kubelet hold
+      kubectl hold
+      EOF
+    warn: false
 
 - name: remove swap file
   mount:
