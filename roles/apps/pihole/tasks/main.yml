@@ -1,0 +1,17 @@
+- name: Convert Pi-hole Secret
+  become: false
+  template:
+    src: secret-pihole.yml.j2
+    dest: /tmp/secret-pihole.yml
+    mode: 0777
+- name: apply Pi-hole Secret
+  shell: kubectl apply -f /tmp/secret-pihole.yml
+
+- name: Convert Pi-hole Deployment
+  become: false
+  template:
+    src: deploy-pihole.yml.j2
+    dest: /tmp/deploy-pihole.yml
+    mode: 0777
+- name: apply Pi-hole Deployment
+  shell: kubectl apply -f /tmp/deploy-pihole.yml

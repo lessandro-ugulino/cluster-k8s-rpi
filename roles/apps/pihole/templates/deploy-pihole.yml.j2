@@ -1,0 +1,175 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pihole-pv
+  namespace: devops-tools
+  labels:
+    type: local
+spec:
+  claimRef:
+    name: pihole-pvc
+    namespace: devops-tools
+  storageClassName: ""
+  nfs:
+    path: "/mnt/nfsshare/pihole"
+    server: "{{ IpAddress.k8s_storage }}"
+    readOnly: false
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pihole-pvc
+  namespace: devops-tools
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+  selector:
+    matchLabels:
+      directory: etc
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pihole-pv-dnsmasq
+  namespace: devops-tools
+  labels:
+    type: local
+    directory: dnsmasq.d
+spec:
+  claimRef:
+    name: pihole-pvc-dnsmasq
+    namespace: devops-tools
+  storageClassName: ""
+  nfs:
+    path: "/mnt/nfsshare/pihole/dnsmasq"
+    server: "{{ IpAddress.k8s_storage }}"
+    readOnly: false
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pihole-pvc-dnsmasq
+  namespace: devops-tools
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      directory: dnsmasq.d
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pihole-configmap
+  namespace: devops-tools
+data:
+  TZ: "Australia/Brisbane"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole
+  namespace: devops-tools
+  labels:
+    app: pihole-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pihole-server
+  template:
+    metadata:
+      labels:
+        app: pihole-server
+      # annotations:
+      #   linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: pihole-container
+          image: pihole/pihole:2023.02.0
+          env:
+            - name: WEBPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pihole-web-credentials
+                  key: webpwd
+            - name: TZ
+              value: "Australia/Brisbane"
+          securityContext:
+              privileged: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "200m"
+            limits:
+              memory: "256Mi"
+              cpu: "400m"
+          ports:
+            - containerPort: 67
+              protocol: UDP
+            - containerPort: 80
+              protocol: TCP
+            - containerPort: 443
+              protocol: TCP
+            - containerPort: 53
+              protocol: UDP
+            - containerPort: 53
+              protocol: TCP
+          volumeMounts:
+            - name: pihole-etc
+              mountPath: /etc/pihole
+            - name: pihole-dnsmasq
+              mountPath: /etc/dnsmasq.d
+      volumes:
+        - name: pihole-etc
+          persistentVolumeClaim:
+              claimName: pihole-pvc
+        - name: pihole-dnsmasq
+          persistentVolumeClaim:
+              claimName: pihole-pvc-dnsmasq
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pihole-svc
+  namespace: devops-tools
+spec:
+  type: ClusterIP
+  externalIPs:
+  - "{{ IpAddress.k8s_node_1 }}"
+  ports:
+  - port: 8000
+    targetPort: 80
+    name: pihole-admin
+  - port: 53
+    targetPort: 53
+    protocol: TCP
+    name: pihole-dns-tcp
+  - port: 53
+    targetPort: 53
+    protocol: UDP
+    name: pihole-dns-udp
+  selector:
+    app: pihole-server

@@ -115,6 +115,7 @@ AWS:
 | Wireguard            | N/A                         | N/A      | N/A      | [link](roles/apps/wireguard/README.md)     |
 | NFS Server           | N/A                         | N/A      | N/A      | [link](roles/apps/nfs-server/README.md)    |
 | Jenkins & Trivy      | http://192.168.1.111:32000  | admin    | P@ssw0rd | [link](roles/apps/jenkins-trivy/README.md) |
+| Pi-hole              | http://192.168.1.111:8000   | admin    |          | [link](roles/apps/pihole/README.md)        |
 
 ### Deploy
 
