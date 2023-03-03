@@ -17,12 +17,13 @@
 
 ## Hardware
 
-- 4 Raspberry Pi 4, 4Gb each
-- 4 Micro SDXC SanDisk 128Gb each (_I could use a smaller one, but this size was the same price as 64Gb_)
+- 3 Raspberry Pi 4, 4Gb each
+- 1 Raspberry Pi 4, 8Gb
+- 4 Micro SDXC SanDisk 128Gb each (64Gb will be enough as well)
 - 4 Cables Ugreen USB C to USB A
 - 1 Micro-HDMI to standard HDMI
 - 1 GeeekPi Rack Tower 4 Layer Acrylic Cluster Case Large Cooling Fan LED RGB Light.
-- 1 Quick Charger 3.0, USB Plug Chargers, 33W Abetcabe 4 Ports USB
+- 1 Anker 60W 6-Port USB Wall Charger, <a href=https://amzn.to/3kMIhiT> amazon link</a>
 
 ## Diagram
 
@@ -51,8 +52,8 @@ My cluster IP address.
 | Hostname        | IP Address      |
 | --------------- | --------------- |
 | rpi-k8s-master  | `192.168.1.123` |
-| rpi-k8s-node-1  | `192.168.1.111` |
-| rpi-k8s-node-2  | `192.168.1.`    |
+| rpi-k8s-node-1  | `192.168.1.164` |
+| rpi-k8s-node-2  | `192.168.1.111` |
 | rpi-k8s-storage | `192.168.1.175` |
 
 Also, as I set up the Rpi to not use a static IP address, once the devices got the respective IPs, I bound this to each respective MAC Address on my router.
@@ -75,7 +76,8 @@ ansible_ssh_pass=Y8WJq84Y #your ubuntu password
 rpi-k8s-master  ansible_host=192.168.1.123
 
 [nodes]
-rpi-k8s-node-1  ansible_host=192.168.1.111
+rpi-k8s-node-1  ansible_host=192.168.1.164
+rpi-k8s-node-2  ansible_host=192.168.1.111
 
 [storage]
 rpi-k8s-storage  ansible_host=192.168.1.175
@@ -88,8 +90,8 @@ This file contains information to be used on K8s services. Update it accordingly
 ```yml
 IpAddress:
   k8s_master: 192.168.1.123
-  k8s_node_1: 192.168.1.111
-  k8s_node_2: 192.168.1
+  k8s_node_1: 192.168.1.164
+  k8s_node_2: 192.168.1.111
   k8s_storage: 192.168.1.175
 
 K8s:
@@ -103,19 +105,22 @@ AWS:
   default_region: ap-southeast-2 #Your default AWS Region
 ```
 
-### Services
+### Applications
 
-> :warning: Make sure you read the documentation before deploying the services.
+> :warning: Make sure you read the documentation before deploying the applications.
 
 | Name                 | URL                         | Username | Password | Documentation                              |
 | -------------------- | --------------------------- | -------- | -------- | ------------------------------------------ |
-| Linkerd              | http://192.168.1.111:32100  | N/A      | N/A      | [link](roles/k8s/linkerd/README.md)        |
-| Kubernetes Dashboard | https://192.168.1.111:32200 | N/A      | N/A      | [link](roles/k8s/dashboard/README.md)      |
+| Linkerd              | http://192.168.1.164:32100  | N/A      | N/A      | [link](roles/k8s/linkerd/README.md)        |
+| Kubernetes Dashboard | https://192.168.1.164:32200 | N/A      | N/A      | [link](roles/k8s/dashboard/README.md)      |
 | Dynamic DNS          | N/A                         | N/A      | N/A      | [link](roles/apps/dynamic-dns/README.md)   |
 | Wireguard            | N/A                         | N/A      | N/A      | [link](roles/apps/wireguard/README.md)     |
 | NFS Server           | N/A                         | N/A      | N/A      | [link](roles/apps/nfs-server/README.md)    |
-| Jenkins & Trivy      | http://192.168.1.111:32000  | admin    | P@ssw0rd | [link](roles/apps/jenkins-trivy/README.md) |
-| Pi-hole              | http://192.168.1.111:8000   | admin    |          | [link](roles/apps/pihole/README.md)        |
+| Jenkins & Trivy      | http://192.168.1.164:32000  | admin    | P@ssw0rd | [link](roles/apps/jenkins-trivy/README.md) |
+| Pi-hole              | http://192.168.1.164:8000   | admin    |          | [link](roles/apps/pihole/README.md)        |
+| Grafana              | http://192.168.1.164:32000  | admin    | admin    | [link](roles/apps/monitoring/README.md)    |
+| Prometheus           | http://192.168.1.164:32090  | N/A      | N/A      | [link](roles/apps/monitoring/README.md)    |
+| Alertmanager         | http://192.168.1.164:32093  | N/A      | N/A      | [link](roles/apps/monitoring/README.md)    |
 
 ### Deploy
 

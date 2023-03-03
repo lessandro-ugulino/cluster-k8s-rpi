@@ -1,0 +1,77 @@
+- name: Copy Grafana templated files into place.
+  become: false
+  copy:
+    src: files/grafana.ini
+    dest: /mnt/rpi-storage/nfsshare/grafana/grafana.ini
+    mode: 0777
+
+- name: Copy Prometheus templated files into place.
+  become: false
+  template:
+    src: prometheus.yml.j2
+    dest: /mnt/rpi-storage/nfsshare/prometheus/prometheus.yml
+    mode: 0777
+
+- name: Copy Prometheus Alert file into place.
+  become: false
+  copy:
+    src: files/alert-rules.yml
+    dest: /mnt/rpi-storage/nfsshare/prometheus/alert-rules.yml
+    mode: 0777
+
+- name: Copy Prometheus Alertmanager file into place.
+  become: false
+  template:
+    src: alertmanager.yml.j2
+    dest: /mnt/rpi-storage/nfsshare/alertmanager/alertmanager.yml
+    mode: 0777
+
+- name: Copy Prometheus Pinghost templated files into place.
+  become: false
+  template:
+    src: prometheus-pinghosts.yaml.j2
+    dest: /mnt/rpi-storage/nfsshare/prometheus/pinghosts.yaml
+    mode: 0777
+
+- name: Copy Blackbox templated files into place.
+  become: false
+  template:
+    src: blackbox-config.yml.j2
+    dest: /mnt/rpi-storage/nfsshare/blackbox_config/config.yml
+    mode: 0777
+
+- name: Convert Prometheus Cluster Role
+  become: false
+  template:
+    src: prometheus-cluster-role.yml.j2
+    dest: /tmp/prometheus-cluster-role.yml
+    mode: 0777
+- name: apply Prometheus Cluster Role
+  shell: kubectl apply -f /tmp/prometheus-cluster-role.yml
+
+- name: Convert Persistent Volume template
+  become: false
+  template:
+    src: persistent-volume.yml.j2
+    dest: /tmp/persistent-volume.yml
+    mode: 0777
+- name: apply Persistent Volume template
+  shell: kubectl apply -f /tmp/persistent-volume.yml
+
+- name: Convert Grafana & Prometheus Deployment
+  become: false
+  template:
+    src: deployment.yml.j2
+    dest: /tmp/deployment.yml
+    mode: 0777
+- name: apply Grafana & Prometheus Deployment
+  shell: kubectl apply -f /tmp/deployment.yml
+
+- name: Convert Services template
+  become: false
+  template:
+    src: services.yml.j2
+    dest: /tmp/services.yml
+    mode: 0777
+- name: apply Services template
+  shell: kubectl apply -f /tmp/services.yml

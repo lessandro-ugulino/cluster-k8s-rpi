@@ -1,0 +1,175 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: grafana-pv
+  namespace: devops-tools
+  labels:
+    type: local
+spec:
+  claimRef:
+    name: grafana-pvc
+    namespace: devops-tools
+  storageClassName: ""
+  nfs:
+    path: "/mnt/nfsshare/grafana"
+    server: "{{ IpAddress.k8s_storage }}"
+    readOnly: false
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: grafana-pvc
+  namespace: devops-tools
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: grafana-datasources-pv
+  namespace: devops-tools
+  labels:
+    type: local
+spec:
+  claimRef:
+    name: grafana-datasources-pvc
+    namespace: devops-tools
+  storageClassName: ""
+  nfs:
+    path: "/mnt/nfsshare/grafana_datasources"
+    server: "{{ IpAddress.k8s_storage }}"
+    readOnly: false
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: grafana-datasources-pvc
+  namespace: devops-tools
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: prometheus-pv
+  namespace: devops-tools
+  labels:
+    type: local
+spec:
+  claimRef:
+    name: prometheus-pvc
+    namespace: devops-tools
+  storageClassName: ""
+  nfs:
+    path: "/mnt/nfsshare/prometheus"
+    server: "{{ IpAddress.k8s_storage }}"
+    readOnly: false
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: prometheus-pvc
+  namespace: devops-tools
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: blackbox-exporter-pv
+  namespace: devops-tools
+  labels:
+    type: local
+spec:
+  claimRef:
+    name: blackbox-exporter-pvc
+    namespace: devops-tools
+  storageClassName: ""
+  nfs:
+    path: "/mnt/nfsshare/blackbox_config"
+    server: "{{ IpAddress.k8s_storage }}"
+    readOnly: false
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: blackbox-exporter-pvc
+  namespace: devops-tools
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: alertmanager-pv
+  namespace: devops-tools
+  labels:
+    type: local
+spec:
+  claimRef:
+    name: alertmanager-pvc
+    namespace: devops-tools
+  storageClassName: ""
+  nfs:
+    path: "/mnt/nfsshare/alertmanager"
+    server: "{{ IpAddress.k8s_storage }}"
+    readOnly: false
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: alertmanager-pvc
+  namespace: devops-tools
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

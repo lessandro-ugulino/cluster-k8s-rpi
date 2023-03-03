@@ -1,0 +1,15 @@
+---
+ping:
+  monitoring_ping_interval: 5s
+  monitoring_ping_hosts: # [URL];[HUMAN_READABLE_NAME]
+    - https://1.1.1.1/;cloudflare.com
+
+speedtest:
+  monitoring_speedtest_interval: 10m
+
+gmail:
+  SERVER: "smtp.gmail.com"
+  PORT: 587
+  FROM: "lessandro.ugulino@gmail.com" #your FROM email
+  TO: "lezampieri@hotmail.com" #your TO email
+  PWD: "xyz" #Your email password. More info https://support.google.com/mail/answer/185833?hl=en

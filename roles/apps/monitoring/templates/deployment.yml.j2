@@ -1,0 +1,128 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring
+  namespace: devops-tools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitoring-server
+  template:
+    metadata:
+      name: monitoring-server
+      labels:
+        app: monitoring-server
+    spec:
+      serviceAccountName: prometheus
+      containers:
+
+      - name: grafana
+        image: lugulino/kubernetes:grafana_v02.03.2023
+        ports:
+        - name: grafana
+          containerPort: 3000
+        volumeMounts:
+          - mountPath: /var/lib/grafana
+            name: grafana-storage
+          - mountPath: /etc/grafana/provisioning/datasources
+            name: grafana-datasources
+            readOnly: false
+          - mountPath: /etc/grafana
+            name: grafana-storage
+
+      - name: prometheus
+        image: prom/prometheus:v2.37.6
+        ports:
+        - name: prometheus
+          containerPort: 9090
+        volumeMounts:
+          - mountPath: /etc/prometheus/
+            name: prometheus
+          - mountPath: /prometheus
+            name: prometheus
+
+      - name: alertmanager
+        image: prom/alertmanager:v0.25.0
+        ports:
+        - name: prometheus
+          containerPort: 9093
+        volumeMounts:
+          - mountPath: /etc/alertmanager/
+            name: alertmanager
+
+      - name: pushgateway
+        image: prom/pushgateway:v1.5.1
+        ports:
+        - name: pushgateway
+          containerPort: 9091
+
+      - name: docker-python3
+        image: lugulino/kubernetes:py3_v02.03.2023
+        volumeMounts:
+          - mountPath: /app
+            name: gg-analytics
+
+      - name: blackbox-exp
+        image: prom/blackbox-exporter:v0.23.0
+        ports:
+        - name: blackbox-exp
+          containerPort: 9115
+        volumeMounts:
+          - mountPath: /etc/blackbox_exporter/
+            name: blackbox-exporter-config
+
+      - name: speedtest-exp
+        image: ghcr.io/miguelndecarvalho/speedtest-exporter:v3.5.3
+        ports:
+        - name: speedtest-exp
+          containerPort: 9798
+
+      - name: pihole-exporter
+        image: ekofr/pihole-exporter:v0.3.0
+        env:
+          - name: PIHOLE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pihole-web-credentials
+                key: webpwd
+          - name: PIHOLE_HOSTNAME
+            value: "{{ IpAddress.k8s_node_1 }}"
+        ports:
+        - name: pihole-expo
+          containerPort: 9617
+
+      volumes:
+        - name: grafana-storage
+          persistentVolumeClaim:
+              claimName: grafana-pvc
+
+        - name: grafana-datasources
+          persistentVolumeClaim:
+              claimName: grafana-datasources-pvc
+
+        - name: prometheus
+          persistentVolumeClaim:
+              claimName: prometheus-pvc
+
+        - name: alertmanager
+          persistentVolumeClaim:
+              claimName: alertmanager-pvc
+
+        - name: blackbox-exporter-config
+          persistentVolumeClaim:
+              claimName: blackbox-exporter-pvc
+
+        - name: gg-analytics
+          persistentVolumeClaim:
+              claimName: gg-analytics-pvc
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: name
+                operator: In
+                values:
+                - rpi-k8s-node-1

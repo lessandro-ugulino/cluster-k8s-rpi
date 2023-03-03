@@ -1,0 +1,27 @@
+
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 10s
+  receiver: 'email'
+
+receivers:
+- name: 'email'
+  email_configs:
+  - to: {{ gmail.TO }}
+    from: {{ gmail.FROM }}
+    smarthost: {{ gmail.SERVER }}:587
+    auth_username: {{ gmail.FROM }}
+    auth_identity: {{ gmail.FROM }}
+    auth_password: {{ gmail.PWD }}
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+
