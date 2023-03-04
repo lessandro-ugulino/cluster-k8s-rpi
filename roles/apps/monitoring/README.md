@@ -1,4 +1,4 @@
-# Services: Monitoring
+# Application: Monitoring
 
 ## Index
 
@@ -34,6 +34,7 @@ This deployment will set up Grafana, Prometheus, Alertmanager, Blackbox, Speedte
 
 1. This deployment depends on [nfs-server](../nfs-server/README.md) deployment.
 2. This deployment depends on [pihole](../pihole/README.md) deployment.
+3. This deployment depends on [node-exporter](../../common/tasks/main.yml) .
 
 Update the var file `main.yml`, line 15, with the email's password.
 

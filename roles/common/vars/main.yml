@@ -15,3 +15,16 @@ K8s_packages:
   - kubelet={{ K8s.version }}
   - kubeadm={{ K8s.version }}
   - kubectl={{ K8s.version }}
+
+node_exporter_bin_path: /usr/local/bin/node_exporter
+node_exporter_arch: armv7
+node_exporter_version: "latest"
+node_exporter_download_url: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-{{ node_exporter_arch }}.tar.gz
+
+# Set node_exporter_host to localhost if you wish to expose node_exporter on localhost only.
+node_exporter_host: ""
+node_exporter_port: 9100
+node_exporter_options: ""
+
+node_exporter_state: started
+node_exporter_enabled: true

@@ -47,7 +47,7 @@ brew install hudochenkov/sshpass/sshpass
 
 As specified on the <a href=https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#3-wifi-or-ethernet> official documentation</a>, we can set up the wifi connection by modifying the file `network-config`.
 
-My cluster IP address.
+Cluster IP addresses.
 
 | Hostname        | IP Address      |
 | --------------- | --------------- |
